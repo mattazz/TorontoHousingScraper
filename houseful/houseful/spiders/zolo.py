@@ -38,9 +38,26 @@ class ZoloSpider(scrapy.Spider):
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0",
         }
 
+        # proxies = [
+        #     "http://45.181.123.201:999",
+        #     "http://181.81.245.194:4128",
+        #     "http://103.88.90.50:8080",
+        #     "http://103.152.232.74:8181",
+        #     "http://45.182.176.38:9947",
+        #     "http://190.120.249.180:999",
+        #     "http://103.141.180.254:80",
+        #     "http://94.131.14.66:3128",
+        #     "http://62.201.251.217:8585",
+        # ]
+
         for url in urls:
+            # proxy = random.choice(proxies)
             yield scrapy.Request(
-                url=url, callback=self.parse, cookies=cookies, headers=headers
+                url=url,
+                callback=self.parse,
+                cookies=cookies,
+                headers=headers,
+                # meta={"proxy": proxy},
             )
 
     def parse(self, response):
@@ -97,5 +114,5 @@ class ZoloSpider(scrapy.Spider):
 
         # Check if the next page exists by ensuring it doesn't exceed a max page limit
         # or by checking the presence of a 'Next' button or similar indicator (not shown here)
-        if next_page_number <= 50:  # Example max limit; adjust or remove as necessary
+        if next_page_number <= 10:  # Example max limit; adjust or remove as necessary
             yield scrapy.Request(url=next_page_url, callback=self.parse)
