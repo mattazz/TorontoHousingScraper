@@ -1,4 +1,5 @@
 from typing import Iterable
+import random
 import scrapy
 
 
@@ -43,5 +44,44 @@ class ZoloSpider(scrapy.Spider):
             )
 
     def parse(self, response):
-        print(response.text)
-        pass
+        for listing in response.css("article.card-listing"):
+            # Extracting the street address
+            street_address = listing.css(".card-listing--location .street::text").get()
+
+            # Extracting the city
+            city = listing.css(".card-listing--location .city::text").get()
+
+            # Extracting the province
+            province = listing.css(".card-listing--location .province::text").get()
+
+            # Extracting the neighbourhood
+            neighbourhood = (
+                listing.css(".card-listing--location .neighbourhood::text")
+                .get()
+                .strip()
+            )
+
+            # Extracting the price
+            price_element = listing.css(".card-listing--values .price::text").get()
+            price = price_element.strip() if price_element else None
+
+            # Extracting the bed, bath, sqft, and age details
+            details = listing.css(".card-listing--values li::text").getall()
+            # This will give you a list like ['1 bed', '1 bath', '600-699 sqft', '0-5 Years Old']
+            # You can further process this list as needed, for example:
+            bed = details[0] if len(details) > 0 else None
+            bath = details[1] if len(details) > 1 else None
+            sqft = details[2] if len(details) > 2 else None
+            age = details[3] if len(details) > 3 else None
+
+            yield {
+                "street_address": street_address,
+                "city": city,
+                "province": province,
+                "neighbourhood": neighbourhood,
+                "price": price,
+                "bed": bed,
+                "bath": bath,
+                "sqft": sqft,
+                "age": age,
+            }
