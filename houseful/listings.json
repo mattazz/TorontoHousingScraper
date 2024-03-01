@@ -29,5 +29,9 @@
 {"street_address": "159 Glenforest Road", "city": "Toronto", "province": "ON", "neighbourhood": "Lawrence Park North", "price": null, "bed": "3 bed", "bath": "2 bath", "sqft": "100+ Years Old", "age": null},
 {"street_address": "507-235 Sherway Gardens Road", "city": "Toronto", "province": "ON", "neighbourhood": "Islington-City Centre West", "price": null, "bed": "2 bed", "bath": "2 bath", "sqft": "800-899 sqft", "age": "11-15 Years Old"},
 {"street_address": "2018-2031 Kennedy Road", "city": "Toronto", "province": "ON", "neighbourhood": "Agincourt South-Malvern West", "price": null, "bed": "2 bed", "bath": "2 bath", "sqft": "700-799 sqft", "age": "New"},
-{"street_address": "1202-271 Ridley Boulevard", "city": "Toronto", "province": "ON", "neighbourhood": "Bedford Park-Nortown", "price": null, "bed": "1 bed", "bath": "1 bath", "sqft": "900-999 sqft", "age": null}
+{"street_address": "1202-271 Ridley Boulevard", "city": "Toronto", "province": "ON", "neighbourhood": "Bedford Park-Nortown", "price": null, "bed": "1 bed", "bath": "1 bath", "sqft": "900-999 sqft", "age": null},
+{"street_address": "1125-120 Harrison Garden Boulevard North", "city": "Toronto", "province": "ON", "neighbourhood": null, "price": null, "bed": "1 bed", "bath": "1 bath", "sqft": null, "age": null},
+{"street_address": "901-76 Shuter Street", "city": "Toronto", "province": "ON", "neighbourhood": "Church-Yonge Corridor", "price": null, "bed": "1 bed", "bath": "1 bath", "sqft": "500-599 sqft", "age": null},
+{"street_address": "99 Stavely Crescent", "city": "Toronto", "province": "ON", "neighbourhood": "Rexdale-Kipling", "price": null, "bed": "3+2 bed", "bath": "2 bath", "sqft": null, "age": null},
+{"street_address": " Melrose Street", "city": "Toronto", "province": "ON", "neighbourhood": "Mimico", "price": "$X,XXX,XXX", "bed": "$X,XXX,XXX", "bath": "— bed", "sqft": "— bath", "age": "— sqft"}
 ]

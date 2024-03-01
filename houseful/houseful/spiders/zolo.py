@@ -55,10 +55,11 @@ class ZoloSpider(scrapy.Spider):
             province = listing.css(".card-listing--location .province::text").get()
 
             # Extracting the neighbourhood
+            neighbourhood_element = listing.css(
+                ".card-listing--location .neighbourhood::text"
+            ).get()
             neighbourhood = (
-                listing.css(".card-listing--location .neighbourhood::text")
-                .get()
-                .strip()
+                neighbourhood_element.strip() if neighbourhood_element else None
             )
 
             # Extracting the price
@@ -85,3 +86,16 @@ class ZoloSpider(scrapy.Spider):
                 "sqft": sqft,
                 "age": age,
             }
+
+        # Find the next page URL
+
+        current_page_number = int(response.url.split("/")[-1].replace("page-", ""))
+        next_page_number = current_page_number + 1
+        next_page_url = (
+            f"https://www.zolo.ca/toronto-real-estate/page-{next_page_number}"
+        )
+
+        # Check if the next page exists by ensuring it doesn't exceed a max page limit
+        # or by checking the presence of a 'Next' button or similar indicator (not shown here)
+        if next_page_number <= 50:  # Example max limit; adjust or remove as necessary
+            yield scrapy.Request(url=next_page_url, callback=self.parse)
