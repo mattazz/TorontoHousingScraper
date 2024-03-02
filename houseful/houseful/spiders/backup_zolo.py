@@ -4,15 +4,11 @@ import scrapy
 
 
 class ZoloSpider(scrapy.Spider):
-    name = "zolo"
+    name = "zolo_backup"
     allowed_domains = ["zolo.ca"]
 
-    def __init__(self, page_num=None, *args, **kwargs):
-        super(ZoloSpider, self).__init__(*args, **kwargs)
-        self.page_num = page_num  # Access the argument
-
     def start_requests(self):
-        urls = [f"https://www.zolo.ca/toronto-real-estate/page-{self.page_num}"]
+        urls = ["https://www.zolo.ca/toronto-real-estate/page-30"]
         cookies = {
             "BID": "04431cd8-d662-11ee-92d1-bc764e102e1e",
             "BSID": "f949c591-d778-11ee-92d1-bc764e102e1e",
