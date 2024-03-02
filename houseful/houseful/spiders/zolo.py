@@ -8,7 +8,7 @@ class ZoloSpider(scrapy.Spider):
     allowed_domains = ["zolo.ca"]
 
     def start_requests(self):
-        urls = ["https://www.zolo.ca/toronto-real-estate/page-2"]
+        urls = ["https://www.zolo.ca/toronto-real-estate/page-4"]
         cookies = {
             "BID": "04431cd8-d662-11ee-92d1-bc764e102e1e",
             "BSID": "f949c591-d778-11ee-92d1-bc764e102e1e",
