@@ -8,7 +8,7 @@ class ZoloSpider(scrapy.Spider):
     allowed_domains = ["zolo.ca"]
 
     def start_requests(self):
-        urls = ["https://www.zolo.ca/toronto-real-estate/page-4"]
+        urls = ["https://www.zolo.ca/toronto-real-estate/page-20"]
         cookies = {
             "BID": "04431cd8-d662-11ee-92d1-bc764e102e1e",
             "BSID": "f949c591-d778-11ee-92d1-bc764e102e1e",
@@ -80,7 +80,8 @@ class ZoloSpider(scrapy.Spider):
             )
 
             # Extracting the price
-            price_element = listing.css(".card-listing--values .price::text").get()
+            # price_element = listing.css(".card-listing--values .price::text").get()
+            price_element = listing.css('span[itemprop="price"]::attr(value)').get()
             price = price_element.strip() if price_element else None
 
             # Extracting the bed, bath, sqft, and age details
