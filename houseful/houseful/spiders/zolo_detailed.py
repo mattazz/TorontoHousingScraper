@@ -1,6 +1,7 @@
 from typing import Iterable
 import random
 import scrapy
+from ..utils import parser
 
 
 class ZoloSpider(scrapy.Spider):
@@ -68,57 +69,67 @@ class ZoloSpider(scrapy.Spider):
         ## EXTRACT SCRIPT CODE###
         scripts = response.css("script::text").getall()
         script = scripts[1]
+        ## This is a dict
+        final_script_data = parser.parse_zolo_json(script)
 
         # Extracting the street address
         address = response.css("h1.address::text").get()  # done
 
-        # Extracting the city
-        city = response.css(".card-listing--location .city::text").get()
+        # Area divided into two elements [0] = city [1] = neighbourhood
+        area = response.css(
+            "section.listing-location div.area a.text-primary::text"
+        ).getall()
 
-        # Extracting the province
-        province = response.css(".card-listing--location .province::text").get()
-
-        # Extracting the neighbourhood
-        neighbourhood_element = response.css(
-            ".card-listing--location .neighbourhood::text"
-        ).get()
-        neighbourhood = neighbourhood_element.strip() if neighbourhood_element else None
+        city = area[0]
+        neighbourhood = area[1]
+        province = response.css("span.province::text").get()
 
         # Extracting the price
-        # price_element = listing.css(".card-listing--values .price::text").get()
-        price_element = response.css('span[itemprop="price"]::attr(value)').get()
+        price_element = response.css("section.listing-price div::text").get()
         price = price_element.strip() if price_element else None
 
         # Extracting the bed, bath, sqft, and age details
-        details = response.css(".card-listing--values li::text").getall()
-        # This will give you a list like ['1 bed', '1 bath', '600-699 sqft', '0-5 Years Old']
-        # You can further process this list as needed, for example:
-        bed = details[0] if len(details) > 0 else None
-        bath = details[1] if len(details) > 1 else None
-        sqft = details[2] if len(details) > 2 else None
-        age = details[3] if len(details) > 3 else None
+        divs = response.css(
+            "section.sm-mb3.sm-column-count-2.column-gap div.column-container.column-break-inside-avoid"
+        )
+        divGroup = divs.css("div.column")
+
+        detailed_info = {}
+        for div in divGroup:
+            items = div.css("div")
+            # Ex: Label = Sale
+            for item in items:
+                label = item.css("div.column-label::text").get()
+                value = item.css("div.column-value span.priv::text").get()
+                if label and value:
+                    detailed_info[label] = value
+
+        print(detailed_info)
+
+        description = response.css(
+            "div.section-listing-content-pad span.priv p::text"
+        ).get()
 
         yield {
-            "street_address": address,
-            "city": city,
-            "province": province,
-            "neighbourhood": neighbourhood,
-            "price": price,
-            "bed": bed,
-            "bath": bath,
-            "sqft": sqft,
-            "age": age,
+            "street_address": address.strip(),
+            "city": city.strip(),
+            "province": province.strip(),
+            "neighbourhood": neighbourhood.strip(),
+            "price": price.strip(),
+            **detailed_info,
+            "description": description.strip(),
+            **final_script_data,
         }
 
-        # Find the next page URL
+        # # Find the next page URL
 
-        current_page_number = int(response.url.split("/")[-1].replace("page-", ""))
-        next_page_number = current_page_number + 1
-        next_page_url = (
-            f"https://www.zolo.ca/toronto-real-estate/page-{next_page_number}"
-        )
+        # current_page_number = int(response.url.split("/")[-1].replace("page-", ""))
+        # next_page_number = current_page_number + 1
+        # next_page_url = (
+        #     f"https://www.zolo.ca/toronto-real-estate/page-{next_page_number}"
+        # )
 
-        # Check if the next page exists by ensuring it doesn't exceed a max page limit
-        # or by checking the presence of a 'Next' button or similar indicator (not shown here)
-        if next_page_number <= 10:  # Example max limit; adjust or remove as necessary
-            yield scrapy.Request(url=next_page_url, callback=self.parse)
+        # # Check if the next page exists by ensuring it doesn't exceed a max page limit
+        # # or by checking the presence of a 'Next' button or similar indicator (not shown here)
+        # if next_page_number <= 10:  # Example max limit; adjust or remove as necessary
+        #     yield scrapy.Request(url=next_page_url, callback=self.parse)
