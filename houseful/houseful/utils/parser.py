@@ -1,8 +1,6 @@
 import json
 import re
 
-data_str = '\n    var ZOLO_DATA = {\n        appuuid: "",\n        pageAction: "property",\n        isListingPage: true,\n        isResidentialProperty: true,\n        sarea: "",\n        mapArea: "100 Parrotta Drive, Toronto M9M 0B5",\n        propertyId: "15355882",\n        propertyLat: "43.734039",\n        propertyLng: "-79.534195",\n        searchCity: "toronto",\n        searchNeighborhood: "humberlea-pelmo-park-w5",\n        hasVirtualTour: false,\n        tourIsHttpsEnabled: false,\n        customFilterSearch: "",\n        isCommercialSearch: false,\n        appStoreRedirect: "https:\\/\\/www.zolo.ca\\/app"\n    }'
-
 
 def parse_zolo_json(data: str) -> dict:
     # Remove the variable assignment part to get just the JSON-like string
@@ -24,3 +22,26 @@ def parse_zolo_json(data: str) -> dict:
     data_dict = json.loads(data)
     print(data_dict)
     return data_dict
+
+
+def csv_remove_blanks():
+    with open("../../links.csv", "r") as f:
+        lines = f.readlines()
+
+    # Remove blank lines
+    lines = [line for line in lines if line.strip() != ""]
+
+    with open("links.csv", "w") as f:
+        f.writelines(lines)
+
+
+def csv_to_list(path: str):
+    list = []
+    with open(path, "r") as f:
+        lines = f.readlines()
+
+    for line in lines:
+        line = line.strip()
+        list.append(line)
+
+    return list
