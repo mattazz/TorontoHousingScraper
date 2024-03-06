@@ -74,13 +74,13 @@ class ZoloSpider(scrapy.Spider):
 
         # Find the next page URL
 
-        current_page_number = int(response.url.split("/")[-1].replace("page-", ""))
-        next_page_number = current_page_number + 1
-        next_page_url = (
-            f"https://www.zolo.ca/toronto-real-estate/page-{next_page_number}"
-        )
+        # current_page_number = int(response.url.split("/")[-1].replace("page-", ""))
+        # next_page_number = current_page_number + 1
+        # next_page_url = (
+        #     f"https://www.zolo.ca/toronto-real-estate/page-{next_page_number}"
+        # )
 
-        # Check if the next page exists by ensuring it doesn't exceed a max page limit
-        # or by checking the presence of a 'Next' button or similar indicator (not shown here)
-        if next_page_number <= 10:  # Example max limit; adjust or remove as necessary
-            yield scrapy.Request(url=next_page_url, callback=self.parse)
+        # # Check if the next page exists by ensuring it doesn't exceed a max page limit
+        # # or by checking the presence of a 'Next' button or similar indicator (not shown here)
+        # if next_page_number <= 10:  # Example max limit; adjust or remove as necessary
+        #     yield scrapy.Request(url=next_page_url, callback=self.parse)

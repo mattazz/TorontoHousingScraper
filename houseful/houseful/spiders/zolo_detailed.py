@@ -13,7 +13,10 @@ class ZoloSpider(scrapy.Spider):
         self.page_num = page_num  # Access the argument
 
     def start_requests(self):
-        urls = [f"https://www.zolo.ca/toronto-real-estate/100-parrotta-drive/85"]
+        urls = [
+            "https://www.zolo.ca/toronto-real-estate/100-parrotta-drive/85",
+            "https://www.zolo.ca/toronto-real-estate/32-hillside-avenue",
+        ]
         cookies = {
             "BID": "04431cd8-d662-11ee-92d1-bc764e102e1e",
             "BSID": "f949c591-d778-11ee-92d1-bc764e102e1e",
