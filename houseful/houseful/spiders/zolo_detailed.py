@@ -57,6 +57,7 @@ class ZoloSpider(scrapy.Spider):
 
         for url in urls:
             # proxy = random.choice(proxies)
+            print("LAST SCRAPE: " + str(url))
             yield scrapy.Request(
                 url=url,
                 callback=self.parse,

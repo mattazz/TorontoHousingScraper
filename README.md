@@ -27,3 +27,11 @@ This README would normally document whatever steps are necessary to get your app
 
 * Repo owner or admin
 * Other community or team contact
+
+
+### Zolo Crawler issues ###
+* Neighborhood scrape sometimes goes index out of range (catch and default to null)
+* File "/Users/mattazada/Desktop/crawlers/houseful/houseful/spiders/zolo_detailed.py", line 119, in parse
+    "price": price.strip(),
+             ^^^^^^^^^^^
+             AttributeError: 'NoneType' object has no attribute 'strip'
