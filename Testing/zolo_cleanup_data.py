@@ -58,17 +58,18 @@ def string_to_nums(data: list) -> list:
 def clean_sqft(data: list) -> list:
     new_data = []
     for item in data:
-        new_item = (
-            item.copy()
-        )  # Make a copy of the item so we don't modify the original
+        new_item = item.copy()
         if "Size (sq ft)" in new_item:
             sqft_raw: str = new_item["Size (sq ft)"]
-            sqft_range_list = sqft_raw.split("-")
-            sqft_range_min = int(sqft_range_list[0])
-            sqft_range_max = int(sqft_range_list[1])
-            # Add it to the dict
-            new_item["sqft_range_min"] = sqft_range_min
-            new_item["sqft_range_max"] = sqft_range_max
+            if "-" in sqft_raw:
+                sqft_range_list = sqft_raw.split("-")
+                sqft_range_min = int(sqft_range_list[0].replace("+", ""))
+                sqft_range_max = int(sqft_range_list[1].replace("+", ""))
+                # Add it to the dict
+                new_item["sqft_range_min"] = sqft_range_min
+                new_item["sqft_range_max"] = sqft_range_max
+            else:
+                print(f"clean_sqft: Unexpected format in {new_item['Size (sq ft)']}")
 
             # Remove the sqft string
             new_item.pop("Size (sq ft)", None)
@@ -84,17 +85,19 @@ def clean_age(data: list) -> list:
         new_item = item.copy()
         if "Age" in new_item:
             age_raw: str = new_item["Age"]
-            age_range_list: list = age_raw.split("-")
-            age_range_min = int(age_range_list[0])
-            age_range_max = int(age_range_list[1])
+            if age_raw == "New":
+                age_range_min = 0
+                age_range_max = 0
+            elif "-" in age_raw:
+                age_range_list: list = age_raw.split("-")
+                age_range_min = int(age_range_list[0].replace("+", ""))
+                age_range_max = int(age_range_list[1].replace("+", ""))
+            else:
+                print(f"clean_age: Unexpected format in {new_item['Age']}")
+                continue
             # Add it to dict
             new_item["age_range_min"] = age_range_min
             new_item["age_range_max"] = age_range_max
-
-            # Remove the Age key
-            new_item.pop("Age", None)
-        else:
-            print(f"clean_age: No Age in {new_item['street_address']}")
         new_data.append(new_item)
     return new_data
 
@@ -130,7 +133,7 @@ def remove_unneeded_attrs(data: list):
 
 def main():
     try:
-        with open("test.json", "r") as f:
+        with open("zolo_total_unclean.json", "r") as f:
             data = json.loads(f.read())
     except IOError:
         print("Error opening or reading input file.")
