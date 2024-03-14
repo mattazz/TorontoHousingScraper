@@ -1,6 +1,7 @@
 import requests
 import time
 import json
+import os
 
 
 # For recursive scraping of all the property links
@@ -33,14 +34,25 @@ def scrape_listing_links(search_string: str, start_page: int):
 
 
 def save_file(fileName: str, data):
+    if os.path.exists(fileName):
+        # If file exists, read the existing data
+        with open(fileName, "r") as f:
+            existing_data = json.load(f)
+        # Append new data to the existing data
+        existing_data.extend(data)
+    else:
+        # If file doesn't exist, just use the new data
+        existing_data = data
+
+    # Write the data to the file
     with open(fileName, "w") as f:
-        json.dump(data, f)
+        json.dump(existing_data, f)
 
 
 result = []
 scrape_listing_links(search_string, page)
 
-while page != 3:
+while page != end_page:
     print(f"Scraping page {page}")
     links = scrape_listing_links(
         search_string, page
@@ -50,7 +62,9 @@ while page != 3:
     print("Done scraping, waiting 5 seconds...")
     time.sleep(5)
 
+    # Save the results after each page scrape
+    save_file("houseful_links.json", result)
+
+
 print(f"Output: {result}")
 result = list(set(result))  # Removes duplicates
-
-save_file("houseful_links.json", result)
