@@ -133,7 +133,7 @@ def remove_unneeded_attrs(data: list):
 
 def main():
     try:
-        with open("test.json", "r") as f:
+        with open("zolo_total_unclean.json", "r") as f:
             data = json.loads(f.read())
     except IOError:
         print("Error opening or reading input file.")
