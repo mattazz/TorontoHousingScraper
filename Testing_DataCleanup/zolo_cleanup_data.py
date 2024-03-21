@@ -63,6 +63,19 @@ def string_to_nums(data: list) -> list:
     return new_data
 
 
+def lotDepth_remove_nulls(data: list):
+    new_data: list = []
+    for item in data:
+        new_item = item.copy()
+        if "Lot Depth" in new_item:
+            if new_item["Lot Depth"] == None:
+                print("Lot Depth found as Null")
+                new_item["Lot Depth"] = 0
+
+        new_data.append(new_item)
+    return new_data
+
+
 def clean_sqft(data: list) -> list:
     """Converts sqft feature into two features, sqft_range_min
     and sqft_range_max
@@ -210,6 +223,7 @@ def main():
     data = clean_sqft(data)
     data = clean_age(data)
     data = remove_unneeded_attrs(data)
+    data = lotDepth_remove_nulls(data)
 
     try:
         with open("result.json", "w") as f:
