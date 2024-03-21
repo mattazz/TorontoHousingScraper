@@ -69,12 +69,65 @@ def lotDepth_remove_nulls(data: list):
         new_item = item.copy()
         if "Lot Depth" in new_item:
             if new_item["Lot Depth"] == None:
-                print("Lot Depth found as Null")
+                print(f"Lot Depth found as Null for {new_item["street_address"]}")
                 new_item["Lot Depth"] = 0
 
         new_data.append(new_item)
     return new_data
 
+
+def frontage_remove_nulls(data: list):
+    new_data: list = []
+    for item in data:
+        new_item = item.copy()
+        if "Frontage" in new_item and "Type" in new_item:  # Check if both keys exist
+            if new_item["Frontage"] == None and new_item["Type"] == "Condo Apt":
+                print(f"{new_item['street_address']} - {new_item['Type']} found no frontage, changing to 0")
+                new_item["Frontage"] = 0
+        new_data.append(new_item)
+    return new_data
+
+
+def remove_vacant_land(data: list):
+    new_data: list = []
+    for item in data:
+        new_item = item.copy()
+        if "Type" in new_item and new_item["Type"] != "Vacant Land" and new_item["street_address"] != "":
+            new_data.append(new_item)
+        else:
+            print(f"Excluded item {new_item['street_address']}  - {new_item.get('Type', 'Type not found')}")
+    return new_data
+
+
+def convert_to_bool(data: list):
+    features = ["Den/Family Room","Central Vac", "Retirement", "Ensuite Laundry", "Elevator", "Fireplace", "Cable Included", "Heating Included", "Parking Included", "Water Included", "Central A/C Included", "Electricity", "Gas", "Cable", "Telephone", "Handicap Equipped"]
+    
+    new_data: list = []
+    for item in data:
+        new_item = item.copy() 
+        for feature in features: # Loop through features list
+            if feature in new_item:  # Check if the feature exists in the item
+                if new_item[feature] == "Y":
+                    new_item[feature] = 1
+                elif new_item[feature] == "N":
+                    new_item[feature] = 0
+                else:
+                    print(f"address {new_item['street_address']} not bool: {new_item[feature]}")
+            else:
+                continue
+        new_data.append(new_item)
+        
+    return new_data
+
+def remove_office_types(data: list):
+    new_data: list = []
+    for item in data:
+        new_item = item.copy()
+        if "Type" in new_item and new_item["Type"] != "Office":
+            new_data.append(new_item)
+        else:
+            print(f"{new_item["street_address"]} is an office, removing...")
+    return new_data
 
 def clean_sqft(data: list) -> list:
     """Converts sqft feature into two features, sqft_range_min
@@ -179,6 +232,7 @@ def remove_unneeded_attrs(data: list):
         "Parking Places",
         "Lockers",
         "Locker Level",
+        "Locker Number",
         "Building Insurance Included",
         "Common Elements Included",
         "Cross Street",
@@ -199,6 +253,57 @@ def remove_unneeded_attrs(data: list):
         "Sewer",
         "Hydro Included",
         "Covered Parking Places",
+        "Fronting On",
+        "Lot Size Units",
+        "Water supply",
+        "Acres ", # Not sure if this is unnecessary
+        "Open House Date",
+        "Open House Start",
+        "Open House Finished",
+        "Tax Legal Description",
+        "Assesment Year",
+        "Assessment",
+        "Lot Irregularities",
+        "Parcel of Tied Land",
+        "Style", # Not sure if needed
+        "Green PIS",
+        "Driveway",
+        "Energy Certificate",
+        "Exterior Features",
+        "Open House Start ",
+        "Open House From ",
+        "Exterior",
+        "Additional Monthly Fee",
+        "Apartment Number",
+        "Cable",
+        "Sold Date",
+        "Closed Date",
+        "Expiry Date",
+        "Sold Price",
+        "Unavailable Date",
+        "Input Date",
+        "Prior LSC",
+        "Free Standing",
+        "Kitchens Plus", # Not sure if needed
+        "Share Percentage",
+        "Shore Allow",
+        "Shoreline Exposure",
+        "Conditional",
+        "Conditional Sold Extension",
+        "Days on Market",
+        "List Date",
+        "Last Status",
+        "Cable Included",
+        "Certificate Level",
+        "Waterfront",
+        "Farm/Agriculture",
+        "Handicap Equipped",
+        "Parking Charges",
+        "Retirement",
+        "Sprinklers",
+        "UFFI",
+        "List Price Type",
+        "Lot Code",
     )
 
     for item in data:
@@ -213,18 +318,24 @@ def remove_unneeded_attrs(data: list):
 def main():
     datasets = {"small": "test.json", "large": "zolo_total_unclean.json"}
     try:
-        with open(datasets["small"], "r") as f:
+        with open(datasets["large"], "r") as f:
             data = json.loads(f.read())
     except IOError:
         print("Error opening or reading input file.")
         return
 
+    # Data cleanup
     data = string_to_nums(data)
     data = clean_sqft(data)
     data = clean_age(data)
     data = remove_unneeded_attrs(data)
     data = lotDepth_remove_nulls(data)
+    data = frontage_remove_nulls(data)
+    data = remove_vacant_land(data)
+    data = convert_to_bool(data)
+    data = remove_office_types(data) # Since focus is residential
 
+    # Data write
     try:
         with open("result.json", "w") as f:
             print("dumping data")
@@ -261,7 +372,6 @@ perform text preprocessing steps like tokenization, stemming, or vectorization (
 feature by adding up all the "Included" features.
 
 [ ] Maybe I should've converted all of this to a DF first before doing cleanup...
-
 
 
 Project Phases:
