@@ -144,8 +144,11 @@ def remove_unneeded_attrs(data: list):
         "Zoning",
         "mapArea",
         "Bedrooms Plus",  # Have no idea what this is
+        "Rooms Plus",
         "Community",
         "Tax Year",
+        "Sewer",
+        "Hydro Included",
     )
 
     for item in data:
