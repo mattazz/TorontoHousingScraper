@@ -246,6 +246,8 @@ perform text preprocessing steps like tokenization, stemming, or vectorization (
 [ ] Feature Engineering: You can create new features based on existing ones. For example, you can create a "Total Amenities Included"
 feature by adding up all the "Included" features.
 
+[ ] Maybe I should've converted all of this to a DF first before doing cleanup...
+
 
 
 Project Phases:
