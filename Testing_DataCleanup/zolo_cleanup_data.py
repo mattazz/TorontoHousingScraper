@@ -120,6 +120,32 @@ def remove_unneeded_attrs(data: list):
         "searchNeighborhood",
         "pageAction",
         "Corporation Number",
+        # These ones I'm removing as a test
+        "Patio Terrace",
+        "Unit Exposure",
+        "Parking Space",
+        "Parking Description",
+        "Parking Designation",
+        "Parking Features",
+        "Parking Places",
+        "Lockers",
+        "Locker Level",
+        "Building Insurance Included",
+        "Common Elements Included",
+        "Cross Street",
+        "Municipality District",
+        "Garage",
+        "Locker Quantity",
+        "Amenity",
+        "Feature",
+        "Condo Corporation",
+        "Property Management",
+        "isResidentialProperty",
+        "Zoning",
+        "mapArea",
+        "Bedrooms Plus",  # Have no idea what this is
+        "Community",
+        "Tax Year",
     )
 
     for item in data:
@@ -132,8 +158,9 @@ def remove_unneeded_attrs(data: list):
 
 
 def main():
+    datasets = {"small": "test.json", "large": "zolo_total_unclean.json"}
     try:
-        with open("zolo_total_unclean.json", "r") as f:
+        with open(datasets["small"], "r") as f:
             data = json.loads(f.read())
     except IOError:
         print("Error opening or reading input file.")
