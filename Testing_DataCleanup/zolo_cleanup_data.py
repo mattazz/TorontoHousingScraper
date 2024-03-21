@@ -2,6 +2,14 @@ import json
 
 
 def string_to_nums(data: list) -> list:
+    """Converts features supposed to be string as float
+
+    Args:
+        data (list): dataset
+
+    Returns:
+        list: dataset
+    """
     """Converts string values to numbers
 
     Args:
@@ -56,6 +64,15 @@ def string_to_nums(data: list) -> list:
 
 
 def clean_sqft(data: list) -> list:
+    """Converts sqft feature into two features, sqft_range_min
+    and sqft_range_max
+
+    Args:
+        data (list): dataset
+
+    Returns:
+        list: dataset
+    """
     new_data = []
     for item in data:
         new_item = item.copy()
@@ -80,6 +97,15 @@ def clean_sqft(data: list) -> list:
 
 
 def clean_age(data: list) -> list:
+    """Converts age feature into two features, age_range_min
+    and age_range_max
+
+    Args:
+        data (list): dataset
+
+    Returns:
+        list: dataset
+    """
     new_data = []
     for item in data:
         new_item = item.copy()
@@ -95,14 +121,24 @@ def clean_age(data: list) -> list:
             else:
                 print(f"clean_age: Unexpected format in {new_item['Age']}")
                 continue
-            # Add it to dict
+
+            # Add it to dict and remove old feature
             new_item["age_range_min"] = age_range_min
             new_item["age_range_max"] = age_range_max
+            new_item.pop("Age", None)
         new_data.append(new_item)
     return new_data
 
 
 def remove_unneeded_attrs(data: list):
+    """Removes unneeded features from the dataset
+
+    Args:
+        data (list): dataset
+
+    Returns:
+        _type_: dataset
+    """
     new_data = []
     unwanted: set = (
         "appuuid",
