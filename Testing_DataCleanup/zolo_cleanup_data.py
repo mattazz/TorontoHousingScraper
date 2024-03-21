@@ -185,6 +185,7 @@ def remove_unneeded_attrs(data: list):
         "Tax Year",
         "Sewer",
         "Hydro Included",
+        "Covered Parking Places",
     )
 
     for item in data:
