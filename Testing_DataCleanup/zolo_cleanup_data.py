@@ -304,6 +304,13 @@ def remove_unneeded_attrs(data: list):
         "UFFI",
         "List Price Type",
         "Lot Code",
+        "Water Body Name",
+        "Water Source",
+        "Water Supply",
+        "Waterfront Features",
+        "Taxes Included",
+        "Structure",
+        "Municipality"
     )
 
     for item in data:
@@ -373,6 +380,11 @@ feature by adding up all the "Included" features.
 
 [ ] Maybe I should've converted all of this to a DF first before doing cleanup...
 
+[ ] Pool = All none and null = 0; all else == 1
+
+[ ] Sale -- Remove any lease 
+
+[ ] Merge "Price" and "List Price"
 
 Project Phases:
 
@@ -389,4 +401,5 @@ Modeling: Train your machine learning model on your preprocessed dataset.
 Evaluation: Assess the performance of your model, tune hyperparameters, etc.
 
 Deployment: Implement your model in a production environment.
+
 """
