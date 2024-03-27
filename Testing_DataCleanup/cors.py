@@ -1,8 +1,10 @@
 import pandas as pd
+import numpy as np
 
 # Replace 'file.json' with your JSON file path
 df = pd.read_json("result.json")
-cols = df.columns
+df = df.select_dtypes(include=[np.number])
+cols = list(df.columns)
 print(cols)
 
 selected_cols: list = [
@@ -14,9 +16,9 @@ selected_cols: list = [
     "Kitchens",
 ]
 
-correlation = df[selected_cols].corr()
+correlation = df[cols].corr()
 print(correlation)
 
 
-unique = df["Pets"].unique()
+unique = df["Furnished"].unique()
 print(unique)

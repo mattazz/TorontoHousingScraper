@@ -1,4 +1,6 @@
 import json
+import pandas as pd
+import numpy as np
 
 
 def string_to_nums(data: list) -> list:
@@ -311,7 +313,8 @@ def remove_unneeded_attrs(data: list):
         "Taxes Included",
         "Structure",
         "Municipality",
-        "Area"
+        "Area",
+        "Telephone"
     )
 
     for item in data:
@@ -322,6 +325,34 @@ def remove_unneeded_attrs(data: list):
 
     return new_data
 
+def pandas_cleanup(data: list):
+    col_list = ["Central A/C Included", "Central Vac", "Elevator", "Ensuite Laundry", "Heating Included", "Kitchens", "Maintenance", "Parking Included", "Rooms", "Stories", "Taxes", "Water Included", "Age Range Max", "Age Range Min"]
+    df = pd.DataFrame(data)
+    
+    # Simple convert to 0.0 (no other unique results)
+    for col in col_list:
+        if col in df.columns:
+            df[col] = df[col].fillna(0.0)
+        
+    df["Air Conditioning"] = df["Air Conditioning"].replace({None: 0, "Central Air": 1, "Wall Unit": 1, "None": 0, "Window Unit": 1, "Other": 1})
+    df["Basement"] = df["Basement"].replace({None: 0, "None": 0, "Sep Entrance": 1, "Full": 1, "Unfinished": 0, "Finished": 1, "Part Bsmt": 1, "Apartment": 1, "Fin W/O": 0, "W/O": 0, "Walk-Up": 1, "Part Fin": 1, "Half": 1, "Other": 0})
+    df['Electricity'] = df["Electricity"].replace({None: 0, "A": 1})
+    df['Furnished'] = df["Furnished"].replace({None: 0, "Part": 1, "Y": 1})
+    df['Gas'] = df['Gas'].replace({None: 0, 'A': 1})
+    df['Heating'] = df['Heating'].replace({None: 0, 'Forced Air': 1, "Heat Pump": 1, "Fan Coil": 1, "Radiant": 1,"Baseboard": 1, "Other": 0})
+    df["Laundry"] = df["Laundry"].replace({None: 0, "Ensuite": 1})
+    df["Pets"] = df["Pets"].replace({None: 0, "Restrict": 1, "N": 0})
+    df["Pool"] = df["Pool"].replace({None: 0, "None": 0, "Inground": 1, "Abv Grnd": 1, "Indoor": 1})
+    df["Private Entrance"] = df["Private Entrance"].replace({None: 0, "N": 0, "Y": 1})
+    
+    
+    # Drop lease rows
+    df = df.loc[df["Status"] != "Lease"]
+    
+    
+    # Replace all NaN with null in json
+    df = df.replace({np.nan:None})
+    return df.to_dict('records')
 
 def main():
     datasets = {"small": "test.json", "large": "zolo_total_unclean.json"}
@@ -342,7 +373,10 @@ def main():
     data = remove_vacant_land(data)
     data = convert_to_bool(data)
     data = remove_office_types(data) # Since focus is residential
-
+    
+    # Pandas stuff
+    data = pandas_cleanup(data)
+    
     # Data write
     try:
         with open("result.json", "w") as f:
