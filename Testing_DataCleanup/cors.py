@@ -18,5 +18,5 @@ correlation = df[selected_cols].corr()
 print(correlation)
 
 
-pool = df["List Price"].unique()
-print(pool)
+unique = df["Pets"].unique()
+print(unique)

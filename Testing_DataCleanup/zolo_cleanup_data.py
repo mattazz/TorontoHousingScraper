@@ -310,7 +310,8 @@ def remove_unneeded_attrs(data: list):
         "Waterfront Features",
         "Taxes Included",
         "Structure",
-        "Municipality"
+        "Municipality",
+        "Area"
     )
 
     for item in data:
@@ -357,6 +358,8 @@ main()
 """
 TASKS: 
 
+[ DO THIS ] Make a function to convert nulls to 0 just for general purpose of different features
+
 [ DO THIS ] Convert Boolean Features: Features like "Ensuite Laundry", "Fireplace", "Building Insurance Included", "Cable Included", etc., seem to have values "Y" or "N" which represent Yes/No. 
 These can be converted to binary 1/0 representation which is more suitable for machine learning algorithms.
 
@@ -385,6 +388,8 @@ feature by adding up all the "Included" features.
 [ ] Sale -- Remove any lease 
 
 [ ] Merge "Price" and "List Price"
+
+[ ] Fix "Basement" types
 
 Project Phases:
 
