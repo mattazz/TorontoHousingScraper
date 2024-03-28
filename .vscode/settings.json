@@ -1,6 +1,7 @@
 {
     "cSpell.ignoreWords": [
         "BSID",
+        "Bsmt",
         "DWNK",
         "Fwww",
         "HREFR",
@@ -20,7 +21,12 @@
         "appuuid",
         "Ensuite",
         "fillna",
+        "Grnd",
+        "Inground",
+        "isin",
         "maint",
-        "sarea"
+        "notna",
+        "sarea",
+        "UFFI"
     ]
 }

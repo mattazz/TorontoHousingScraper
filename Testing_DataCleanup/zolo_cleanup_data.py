@@ -65,31 +65,6 @@ def string_to_nums(data: list) -> list:
     return new_data
 
 
-def lotDepth_remove_nulls(data: list):
-    new_data: list = []
-    for item in data:
-        new_item = item.copy()
-        if "Lot Depth" in new_item:
-            if new_item["Lot Depth"] == None:
-                print(f"Lot Depth found as Null for {new_item["street_address"]}")
-                new_item["Lot Depth"] = 0
-
-        new_data.append(new_item)
-    return new_data
-
-
-def frontage_remove_nulls(data: list):
-    new_data: list = []
-    for item in data:
-        new_item = item.copy()
-        if "Frontage" in new_item and "Type" in new_item:  # Check if both keys exist
-            if new_item["Frontage"] == None and new_item["Type"] == "Condo Apt":
-                print(f"{new_item['street_address']} - {new_item['Type']} found no frontage, changing to 0")
-                new_item["Frontage"] = 0
-        new_data.append(new_item)
-    return new_data
-
-
 def remove_vacant_land(data: list):
     new_data: list = []
     for item in data:
@@ -97,7 +72,8 @@ def remove_vacant_land(data: list):
         if "Type" in new_item and new_item["Type"] != "Vacant Land" and new_item["street_address"] != "":
             new_data.append(new_item)
         else:
-            print(f"Excluded item {new_item['street_address']}  - {new_item.get('Type', 'Type not found')}")
+            None
+            # print(f"Excluded item {new_item['street_address']}  - {new_item.get('Type', 'Type not found')}")
     return new_data
 
 
@@ -114,7 +90,8 @@ def convert_to_bool(data: list):
                 elif new_item[feature] == "N":
                     new_item[feature] = 0
                 else:
-                    print(f"address {new_item['street_address']} not bool: {new_item[feature]}")
+                    # print(f"address {new_item['street_address']} not bool: {new_item[feature]}")
+                    None
             else:
                 continue
         new_data.append(new_item)
@@ -150,16 +127,16 @@ def clean_sqft(data: list) -> list:
                 sqft_range_list = sqft_raw.split("-")
                 sqft_range_min = int(sqft_range_list[0].replace("+", ""))
                 sqft_range_max = int(sqft_range_list[1].replace("+", ""))
-                # Add it to the dict
                 new_item["sqft_range_min"] = sqft_range_min
                 new_item["sqft_range_max"] = sqft_range_max
+            elif "+" in sqft_raw:
+                sqft_value = int(sqft_raw.replace("+", ""))
+                new_item["sqft_range_min"] = sqft_value
+                new_item["sqft_range_max"] = sqft_value
             else:
-                print(f"clean_sqft: Unexpected format in {new_item['Size (sq ft)']}")
+                print(f"clean_sqft: Unexpected format ||{new_item['Size (sq ft)']}|| in {new_item['street_address']}")
 
-            # Remove the sqft string
             new_item.pop("Size (sq ft)", None)
-        else:
-            print(f"clean_sqft: No sqft in {new_item['street_address']}")
         new_data.append(new_item)
     return new_data
 
@@ -187,7 +164,7 @@ def clean_age(data: list) -> list:
                 age_range_min = int(age_range_list[0].replace("+", ""))
                 age_range_max = int(age_range_list[1].replace("+", ""))
             else:
-                print(f"clean_age: Unexpected format in {new_item['Age']}")
+                print(f"clean_age: Unexpected format ||{new_item['Age']}|| in {new_item['street_address']}")
                 continue
 
             # Add it to dict and remove old feature
@@ -209,6 +186,7 @@ def remove_unneeded_attrs(data: list):
     """
     new_data = []
     unwanted: set = (
+        "Assesment Year",
         "appuuid",
         "isListingPage",
         "sarea",
@@ -219,7 +197,6 @@ def remove_unneeded_attrs(data: list):
         "isCommercialSearch",
         "appStoreRedirect",
         "Parcel Number",
-        "propertyId",
         "Virtual Tour",
         "searchNeighborhood",
         "pageAction",
@@ -263,7 +240,6 @@ def remove_unneeded_attrs(data: list):
         "Open House Start",
         "Open House Finished",
         "Tax Legal Description",
-        "Assesment Year",
         "Assessment",
         "Lot Irregularities",
         "Parcel of Tied Land",
@@ -326,7 +302,8 @@ def remove_unneeded_attrs(data: list):
     return new_data
 
 def pandas_cleanup(data: list):
-    col_list = ["Central A/C Included", "Central Vac", "Elevator", "Ensuite Laundry", "Heating Included", "Kitchens", "Maintenance", "Parking Included", "Rooms", "Stories", "Taxes", "Water Included", "Age Range Max", "Age Range Min"]
+    # Those with simple fill null to zero
+    col_list = ["Lot Depth", "Frontage", "Central A/C Included", "Central Vac", "Elevator", "Ensuite Laundry", "Heating", "Heating Included", "Kitchens", "Maintenance", "Parking Included", "Rooms", "Stories", "Taxes", "Water Included", "age_range_min", "age_range_max", "Frontage", "sqft_range_min", "sqft_range_max"]
     df = pd.DataFrame(data)
     
     # Simple convert to 0.0 (no other unique results)
@@ -345,14 +322,49 @@ def pandas_cleanup(data: list):
     df["Pool"] = df["Pool"].replace({None: 0, "None": 0, "Inground": 1, "Abv Grnd": 1, "Indoor": 1})
     df["Private Entrance"] = df["Private Entrance"].replace({None: 0, "N": 0, "Y": 1})
     
-    
     # Drop lease rows
     df = df.loc[df["Status"] != "Lease"]
+    # Drop house types of Locker and Parking Space
+    df = df.loc[~df['Type'].isin(['Locker', 'Parking Space'])]
     
-    
+    # Fill 'Price' column with values from 'List Price' column where 'Price' is null
+    df['price'] = df['price'].fillna(df['List Price'])
+
+    # Delete 'List Price' column
+    df = df.drop('List Price', axis=1)
+
     # Replace all NaN with null in json
     df = df.replace({np.nan:None})
+    
     return df.to_dict('records')
+
+def compute_sqft_average(data: list):
+    df = pd.DataFrame(data)
+    if 'sqft_range_min' in df.columns and 'sqft_range_max' in df.columns:
+        # Only compute the average where both sqft_range_min and sqft_range_max are not null
+        mask = df[['sqft_range_min', 'sqft_range_max']].notna().all(axis=1)
+        df.loc[mask, 'sqft_average'] = df.loc[mask, ['sqft_range_min', 'sqft_range_max']].mean(axis=1)
+    else:
+        print(f"sqft not found in {df['street_address']}")
+    
+    # Convert sqft_average nulls to 0
+    df['sqft_average'] = df['sqft_average'].fillna(0.0)
+    
+    # If sqft_average is 0, check for lot depth and frontage
+    if 'Lot Depth' in df.columns and 'Frontage' in df.columns:
+        mask = (df['sqft_average'] == 0) & df[['Lot Depth', 'Frontage']].notna().all(axis=1)
+        df.loc[mask, 'sqft_average'] = df.loc[mask, 'Lot Depth'] * df.loc[mask, 'Frontage']
+    
+    # Drop rows where sqft_average is still 0
+    df = df[df['sqft_average'] != 0]
+    
+    # Drop rows where price == 1
+    df = df[df['price'] != 1]
+    
+    
+    
+    return df.to_dict('records')
+
 
 def main():
     datasets = {"small": "test.json", "large": "zolo_total_unclean.json"}
@@ -368,13 +380,12 @@ def main():
     data = clean_sqft(data)
     data = clean_age(data)
     data = remove_unneeded_attrs(data)
-    data = lotDepth_remove_nulls(data)
-    data = frontage_remove_nulls(data)
     data = remove_vacant_land(data)
     data = convert_to_bool(data)
     data = remove_office_types(data) # Since focus is residential
     
     # Pandas stuff
+    data = compute_sqft_average(data)
     data = pandas_cleanup(data)
     
     # Data write
@@ -391,13 +402,16 @@ main()
 
 """
 TASKS: 
+[ ] Why is sqft range not correlated to price?? -- do computation to fill sqft average
 
-[ DO THIS ] Make a function to convert nulls to 0 just for general purpose of different features
+[ ] Consider what to do with lot depth 
 
-[ DO THIS ] Convert Boolean Features: Features like "Ensuite Laundry", "Fireplace", "Building Insurance Included", "Cable Included", etc., seem to have values "Y" or "N" which represent Yes/No. 
+[x] Make a function to convert nulls to 0 just for general purpose of different features
+
+[x] Convert Boolean Features: Features like "Ensuite Laundry", "Fireplace", "Building Insurance Included", "Cable Included", etc., seem to have values "Y" or "N" which represent Yes/No. 
 These can be converted to binary 1/0 representation which is more suitable for machine learning algorithms.
 
-[ DO THIS ] Handle Null Values: Features like "Rooms Plus" and "Locker Level" have null values. 
+[x] Handle Null Values: Features like "Rooms Plus" and "Locker Level" have null values. 
 \Depending on the proportion of missing values and the importance of the feature, you can choose to fill them with a 
 default value (like the mean or median for numerical features, or the most common value for categorical features), 
 or you might choose to drop the feature if it has too many missing values.
@@ -409,21 +423,17 @@ depending on the nature of the category.
 [ ] Text Processing: The "description" field is a text field. If you want to use this in your model, you might need to 
 perform text preprocessing steps like tokenization, stemming, or vectorization (like TF-IDF or word embeddings).
 
-[ ] Drop Unnecessary Features: Some features might not be useful for your model, like "Virtual Tour" (which is a URL), 
+[x] Drop Unnecessary Features: Some features might not be useful for your model, like "Virtual Tour" (which is a URL), 
 "pageAction", "mapArea", etc. You can consider dropping these.
 
 [ ] Feature Engineering: You can create new features based on existing ones. For example, you can create a "Total Amenities Included"
 feature by adding up all the "Included" features.
 
-[ ] Maybe I should've converted all of this to a DF first before doing cleanup...
+[x] Sale -- Remove any lease 
 
-[ ] Pool = All none and null = 0; all else == 1
+[x] Merge "Price" and "List Price"
 
-[ ] Sale -- Remove any lease 
-
-[ ] Merge "Price" and "List Price"
-
-[ ] Fix "Basement" types
+[x] Fix "Basement" types
 
 Project Phases:
 

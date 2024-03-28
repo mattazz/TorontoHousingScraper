@@ -1,24 +1,22 @@
 import pandas as pd
 import numpy as np
+import openpyxl
 
 # Replace 'file.json' with your JSON file path
 df = pd.read_json("result.json")
+
+# For distinct
+unique = df["sqft_average"].unique()
+print(unique)
+
+
+# For Correlation
 df = df.select_dtypes(include=[np.number])
 cols = list(df.columns)
-print(cols)
+# print(cols)
 
-selected_cols: list = [
-    "price",
-    "age_range_min",
-    "sqft_range_min",
-    "Bedrooms",
-    "Bathrooms",
-    "Kitchens",
-]
 
 correlation = df[cols].corr()
 print(correlation)
 
-
-unique = df["Furnished"].unique()
-print(unique)
+correlation.to_excel("correlation.xlsx", index=False)
