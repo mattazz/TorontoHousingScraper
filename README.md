@@ -1,37 +1,21 @@
-# README #
+# Toronto Housing Scrape using Python-Scrapy
 
-This README would normally document whatever steps are necessary to get your application up and running.
+## Project Description
 
-### What is this repository for? ###
+This project is a web scraper built using Python and Scrapy to collect housing data from various real estate websites in Toronto. The goal is to gather comprehensive data on housing listings, including details such as price, square footage, type, and other relevant attributes. The collected data is then cleaned and processed for further analysis.
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+## Features
 
-### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+- **Web Scraping**: Utilizes Scrapy to scrape housing data from multiple real estate websites.
+- **Data Cleaning**: Includes functions to clean and preprocess the scraped data, such as handling missing values, converting data types, and computing additional attributes.
+- **Data Analysis**: Computes useful metrics like average square footage and filters out irrelevant listings.
+- **Data Export**: Exports the cleaned data to CSV and Excel formats for easy analysis and sharing.
 
 
-### Zolo Crawler issues ###
-* Neighborhood scrape sometimes goes index out of range (catch and default to null)
-* File "/Users/mattazada/Desktop/crawlers/houseful/houseful/spiders/zolo_detailed.py", line 119, in parse
-    "price": price.strip(),
-             ^^^^^^^^^^^
-             AttributeError: 'NoneType' object has no attribute 'strip'
+## Data Cleaning Functions
+
+- **`clean_sqft(data)`**: Cleans and formats the square footage data.
+- **`compute_sqft_average(data)`**: Computes the average square footage.
+- **`fill_na_with_zero(data)`**: Fills missing values with zero.
+- **`remove_vacant_land(data)`**: Removes listings marked as vacant land.
+- **`remove_office_types(data)`**: Removes listings marked as office types.
