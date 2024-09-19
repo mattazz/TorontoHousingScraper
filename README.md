@@ -4,6 +4,7 @@
 
 This project is a web scraper built using Python and Scrapy to collect housing data from various real estate websites in Toronto. The goal is to gather comprehensive data on housing listings, including details such as price, square footage, type, and other relevant attributes. The collected data is then cleaned and processed for further analysis.
 
+![Scatterplot](./assets/scatterplot.png)
 ## Features
 
 - **Web Scraping**: Utilizes Scrapy to scrape housing data from multiple real estate websites.
@@ -11,6 +12,7 @@ This project is a web scraper built using Python and Scrapy to collect housing d
 - **Data Analysis**: Computes useful metrics like average square footage and filters out irrelevant listings.
 - **Data Export**: Exports the cleaned data to CSV and Excel formats for easy analysis and sharing.
 
+![Heatmap](./assets/heatmap.png)
 
 ## Data Cleaning Functions
 
